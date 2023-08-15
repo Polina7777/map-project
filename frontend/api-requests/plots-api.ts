@@ -29,6 +29,7 @@ export const getPlotByIdWithCollection = async(id:string)=>{
 
 export const createNewPlot =  async (level:any,pointSet:any) => {
    //pointSetArr = []
+   console.log(level)
     const responseCreatePlot = await fetch(`${url_ngrok}api/plots`, {
       headers:{
              "Content-Type": "application/json",
@@ -74,4 +75,4 @@ export const createNewPlot =  async (level:any,pointSet:any) => {
   };
 
 
-export const recipesApi = {getAllPlots,getPlotById,getPlotByIdWithCollection,getAllPlotsWithCollection,createNewPlot}
+export const plotsApi = {getAllPlots,getPlotById,getPlotByIdWithCollection,getAllPlotsWithCollection,createNewPlot}
