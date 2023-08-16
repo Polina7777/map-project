@@ -1,12 +1,29 @@
-<script lang="ts" setup>
+<script lang="ts" >
 import SubmitForm from './submitForm.vue';
-
-const props = defineProps({
+ 
+export default{
+props:{
  showSubmitModal: Boolean,
- title:String,
- level:String,
- pointSet:Array
-})
+ createNewPlot:Function,
+map:Object,
+ plotData:Object,
+// value:Object
+},
+components:{
+SubmitForm
+},
+data(){
+  return{
+    internalValue:this.plotData
+  }
+},
+watch:{
+  internalValue(newValue){
+    this.$emit('input',newValue)
+  }
+}
+}
+
 </script>
 <template>
   <Transition name="modal">
@@ -21,7 +38,7 @@ const props = defineProps({
         </div>
         <div class="modal-body">
             <slot name="body">
-        <SubmitForm :title="title" :level="level" :pointSet="pointSet"/>
+        <SubmitForm   :internalValue="internalValue" :createNewPlot="createNewPlot" :map="map" />
    </slot>
         </div>
       </div>

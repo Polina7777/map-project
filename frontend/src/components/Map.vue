@@ -7,10 +7,10 @@ import { watch } from 'vue';
 export default {
   name: 'Map',
   props: [
-    'createNewPlots',
-    'addMarker',
-    'addPolygon',
-    'handleDrawCreate',
+    // 'createNewPlots',
+    // 'addMarker',
+    // 'drawPolygon',
+    // 'handleDrawCreate',
    
   ],
   data() {
@@ -22,32 +22,32 @@ export default {
       level:'',
     };
   },
-  // mounted() {
-  //   mapboxgl.accessToken = 'pk.eyJ1IjoicGFsaW5hNzc3NyIsImEiOiJjbGxiYTlyb2gwMXMxM2lxb2dxdWRwNmVmIn0.dRldwa4loILEulZbxhwxqA';
-  //   this.map = new mapboxgl.Map({
-  //     container: 'map',
-  //     style: 'mapbox://styles/mapbox/streets-v10', // выберите нужный стиль карты
-  //     center:  [-87.661557, 41.893748], // начальные координаты
-  //     zoom: 5 // начальный масштаб
-  //   });
-  //   this.draw = new MapboxDraw({
-  //     displayControlsDefault: false,
-  //     controls: {
-  //       polygon: true,
-  //       trash: true
-  //     }
-  //   });
+//   mounted() {
+//     mapboxgl.accessToken = 'pk.eyJ1IjoicGFsaW5hNzc3NyIsImEiOiJjbGxiYTlyb2gwMXMxM2lxb2dxdWRwNmVmIn0.dRldwa4loILEulZbxhwxqA';
+//     this.map = new mapboxgl.Map({
+//       container: 'map',
+//       style: 'mapbox://styles/mapbox/streets-v10', // выберите нужный стиль карты
+//       center:  [-87.661557, 41.893748], // начальные координаты
+//       zoom: 5 // начальный масштаб
+//     });
+//     this.draw = new MapboxDraw({
+//       displayControlsDefault: false,
+//       controls: {
+//         polygon: true,
+//         trash: true
+//       }
+//     });
 
-  //   this.map.on('click',this.addMarker);
-  //   this.map.addControl(this.draw);
-  //    this.map.on('draw.create', this.handleDrawCreate);
-  //    map.addControl(draw);
+//     this.map.on('click',this.addMarker);
+//     this.map.addControl(this.draw);
+//      this.map.on('draw.create', this.handleDrawCreate);
+//      map.addControl(draw);
        
-  //      map.on('draw.create', this.createArea);
-  //      map.on('draw.delete', this.deleteArea);
-  //      map.on('draw.update', this.updateArea);
+//        map.on('draw.create', this.createArea);
+//        map.on('draw.delete', this.deleteArea);
+//        map.on('draw.update', this.updateArea);
 
-  // },
+//   },
 
 // methods:{
 // async getAllPoints() {

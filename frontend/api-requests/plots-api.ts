@@ -27,9 +27,7 @@ export const getPlotByIdWithCollection = async(id:string)=>{
 }
 
 
-export const createNewPlot =  async (level:any,pointSet:any) => {
-   //pointSetArr = []
-   console.log(level)
+export const createNewPlot =  async (title:any,level:any,pointSet:any) => { 
     const responseCreatePlot = await fetch(`${url_ngrok}api/plots`, {
       headers:{
              "Content-Type": "application/json",
@@ -37,6 +35,7 @@ export const createNewPlot =  async (level:any,pointSet:any) => {
       method: "POST",
       body: JSON.stringify({
         data:{
+            title:title,
             level:level,
             point_set:pointSet,
         }   
@@ -44,35 +43,28 @@ export const createNewPlot =  async (level:any,pointSet:any) => {
     });
     const data = await responseCreatePlot.json();
     const plot = data;
-    return plot;
-    // const responseConnectAllCollections = await fetch(`${url_ngrok}api/plots/${plot.data.id}`, {
-    //     headers:{
-    //            "Content-Type": "application/json",
-    //              },
-    //     method: "PUT",
-    //     body: JSON.stringify({
-    //              data:{
-    //                 categories:{
-    //                     connect:[4,categoryId]
-    //                 },
-    //                 small_extra_info:{
-    //                     connect: [smallInfoCollectionId.id],
-    //                 },
-    //                 extra_info:{
-    //                     connect: [extraInfoCollectionId.id],
-    //                 },
-    //                 processing:{
-    //                     connect:[processCollectionId.id]
-    //                 },
-    //                 ingredient_collection:{
-    //                     connect:[ingredientCollectionId.id]
-    //                 }
-    //              }
-    //             }),
-    //   });
-  
-    // const connectData = await responseConnectAllCollections.json();
+    return plot; 
   };
+  export const updatePlot =  async (id:any,pointSet) => { 
+    const responseCreatePlot = await fetch(`${url_ngrok}api/plots/${id}`, {
+      headers:{
+             "Content-Type": "application/json",
+               },
+      method: "PUT",
+      body: JSON.stringify({
+        data:{
+            // title:title,
+            // level:level,
+            point_set:pointSet,
+        }   
+              }),
+    });
+    const data = await responseCreatePlot.json();
+    const plot = data;
+    return plot;
+
+  };
+  
 
 
 export const plotsApi = {getAllPlots,getPlotById,getPlotByIdWithCollection,getAllPlotsWithCollection,createNewPlot}
