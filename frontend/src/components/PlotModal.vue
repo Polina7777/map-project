@@ -1,44 +1,47 @@
 <script lang="ts" >
-import SubmitForm from './submitForm.vue';
+import PlotForm from './PlotForm.vue';
  
 export default{
 props:{
- showSubmitModal: Boolean,
- createNewPlot:Function,
-map:Object,
- plotData:Object,
+ showPlotModal: Boolean,
+//  createNewPlot:Function,
 // value:Object
+deleteFun:Function,
+// updateFun:Function,
+// plotData:Object,
 },
 components:{
-SubmitForm
+PlotForm
 },
 data(){
   return{
-    internalValue:this.plotData
+    // internalValue:this.plotData
   }
 },
-watch:{
-  internalValue(newValue){
-    this.$emit('input',newValue)
-  }
-}
+// watch:{
+//   internalValue(newValue){
+//     this.$emit('input',newValue)
+//   }
+// }
 }
 
 </script>
 <template>
   <Transition name="modal">
-    <div v-if="showSubmitModal" class="modal-mask">
+    <div v-if="showPlotModal" class="modal-mask">
       <div class="modal-container">
-        <div class="modal-header">
-            <!-- <button
+        <!-- <div class="modal-header"> -->
+          
+          <!-- <slot name="header">Create new plot</slot> -->
+        <!-- </div> -->
+        <div class="modal-body">
+         
+            <slot name="body">
+        <PlotForm  :deleteFun="deleteFun" />
+        <button
               class="modal-default-button"
               @click="$emit('close')"
-            >Close</button> -->
-          <slot name="header">Create new plot</slot>
-        </div>
-        <div class="modal-body">
-            <slot name="body">
-        <SubmitForm   :internalValue="internalValue" :createNewPlot="createNewPlot" :map="map" />
+            >Close</button>
    </slot>
         </div>
       </div>

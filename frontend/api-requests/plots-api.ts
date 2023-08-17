@@ -26,6 +26,12 @@ export const getPlotByIdWithCollection = async(id:string)=>{
     return plot;
 }
 
+export const deletePlotById = async(id:string)=>{
+  const response = await fetch(`${url_ngrok}api/plots/${id}`,{method:'DELETE'});
+  const data = await response.json();
+  const plot = data.data
+  return plot;
+}
 
 export const createNewPlot =  async (title:any,level:any,pointSet:any) => { 
     const responseCreatePlot = await fetch(`${url_ngrok}api/plots`, {
@@ -67,4 +73,4 @@ export const createNewPlot =  async (title:any,level:any,pointSet:any) => {
   
 
 
-export const plotsApi = {getAllPlots,getPlotById,getPlotByIdWithCollection,getAllPlotsWithCollection,createNewPlot}
+export const plotsApi = {getAllPlots,getPlotById,getPlotByIdWithCollection,getAllPlotsWithCollection,createNewPlot,deletePlotById,updatePlot}

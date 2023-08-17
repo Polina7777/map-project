@@ -6,13 +6,6 @@ import { watch } from 'vue';
 
 export default {
   name: 'Map',
-  props: [
-    // 'createNewPlots',
-    // 'addMarker',
-    // 'drawPolygon',
-    // 'handleDrawCreate',
-   
-  ],
   data() {
     return {
       map: null,

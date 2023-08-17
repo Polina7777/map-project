@@ -1,24 +1,25 @@
 <script>
 import Map from "../components/Map.vue";
 import SubmitModal from "../components/SubmitModal.vue";
+import PlotModal from "../components/PlotModal.vue";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { plotsApi } from "../../api-requests/plots-api";
 import { ref } from "vue";
 
 export default {
-//   created(){
-// this.getAllPlots()
-//   },
+  //   created(){
+  // this.getAllPlots()
+  //   },
   data() {
     return {
       map: null,
       draw: null,
-      // title: "",
-      // level: "",
-      // pointSet: "",
       showSubmitModal: ref(false),
+      showPlotModal: ref(false),
+      clickedFeature: null,
       // plotCoordinates: null,
-      plots:[],
+      plots: [],
+      plotsArr: [],
       plotData: {
         title: "",
         level: "",
@@ -26,8 +27,14 @@ export default {
       },
     };
   },
+  //   watch:{
+  //     plots:{
+  //       handler(newPlots){
+  // this.updateMap()
+  //       },immediate:true
+  //     }
+  //   },
   mounted() {
-
     mapboxgl.accessToken =
       "pk.eyJ1IjoicGFsaW5hNzc3NyIsImEiOiJjbGxiYTlyb2gwMXMxM2lxb2dxdWRwNmVmIn0.dRldwa4loILEulZbxhwxqA";
     this.map = new mapboxgl.Map({
@@ -43,30 +50,48 @@ export default {
         trash: true,
       },
     });
-    console.log(this.map)
-    this.getAllPlots()
+    this.getAllPlots();
     // this.map.on('click',this.addMarker);
     this.map.addControl(this.draw);
     //  this.map.on('draw.create', this.handleDrawCreate);
-    this.map.on('style.load',this.handleMapStyleLoad)
+    this.map.on("style.load", this.handleMapStyleLoad);
     // this.map.on("draw.create", this.createArea);
     // this.map.on("draw.delete", this.deleteArea);
     // this.map.on("draw.update", this.updateArea);
   },
   methods: {
-handleMapStyleLoad(){
-  this.map.on("draw.create", this.createArea);
-    this.map.on("draw.delete", this.deleteArea);
-    this.map.on("draw.update", this.updateArea);
-},
+    handleMapStyleLoad() {
+      this.map.on("draw.create", this.createArea);
+      this.map.on("draw.delete", this.deleteArea);
+      this.map.on("draw.update", this.updateArea);
+      // this.map.on("click", this.clickPlot);
+      //   this.plots.forEach(plot => {
+      //       const sourceId = `plots-source-${plot.id}`;
+      //       const layerId = `plots-layer-${plot.id}`;
+
+      //       this.map.on('click', layerId, (e) => {
+
+      //   const features = this.map.queryRenderedFeatures(e.point, {
+      //     layers: [layerId]
+      //   });
+      //   console.log(features)
+      //   if (features.length > 0) {
+
+      //     const clickedFeature = features[0]; // Информация о кликнутом участке
+      //     console.log(clickedFeature);
+      //   }
+      // });
+      //   })
+    },
+    clickFun(e) {
+      console.log(e);
+    },
     async getAllPlots() {
-      // this.loading = true
-      // this.error = false
       try {
         this.plots = await plotsApi.getAllPlots();
-        this.plots.map((item,index)=>{
-          this.addPolygons(item)
-        })
+        this.plots.map((item, index) => {
+          this.addPolygons(item);
+        });
       } catch (err) {
         console.log(err);
         // this.error = true
@@ -81,15 +106,14 @@ handleMapStyleLoad(){
           this.plotData.level,
           this.plotData.plotCoordinates
         );
-        this.drawPolygon(this.plotData.plotCoordinates);
-        this.showSubmitModal=false;
+        // this.drawPolygon(this.plotData.plotCoordinates);
+        this.showSubmitModal = false;
       } catch (err) {
         console.log(err);
         // this.error = true
       } finally {
         this.loading = false;
       }
-
     },
     addMarker(event) {
       const point = new mapboxgl.Marker()
@@ -102,51 +126,94 @@ handleMapStyleLoad(){
     },
     drawPolygon() {
       this.map.addLayer({
-        // id: 'maine',
-        id: this.plotData.title,
+        id: layerId,
         type: "fill",
-        source: {
-          type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: {
-              type: "Polygon",
-              // coordinates: points,
-              coordinates:this.plotData.plotCoordinates
-            },
-          },
-        },
+        source: sourceId,
+        // id: 'maine',
+        // id: this.plotData.title,
+        // type: "fill",
+        // source: {
+        //   type: "geojson",
+        //   data: {
+        //     type: "Feature",
+        //     geometry: {
+        //       type: "Polygon",
+        //       // coordinates: points,
+        //       coordinates:this.plotData.plotCoordinates
+        //     },
+        //   },
+        // },
         layout: {},
         paint: {
-          "fill-color": "#088",
-          "fill-opacity": 0.3,
+          // "fill-color": "#088",
+          // "fill-opacity": 0.3,
+          "fill-color": "rgba(0, 0, 255, 0.5)", // Цвет заливки
+          "fill-outline-color": "blue", // Цвет обводки
         },
       });
     },
     addPolygons(item) {
-      this.map.addLayer({
-        // id: 'maine',
-        id: item.attributes.title,
-        type: "fill",
-        source: {
-          type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: {
-              type: "Polygon",
-              // coordinates: points,
-              coordinates:item.attributes.point_set
-            },
+      const sourceId = `plots-source-${item.id}`;
+      const layerId = `plots-layer-${item.id}`;
+      // this.map.addLayer({
+      //   // id: 'maine',
+      //   id: layerId,
+      //   type: "fill",
+      //   source: {
+      //     type: "geojson",
+      //     data: {
+      //       type: "Feature",
+      //       geometry: {
+      //         type: "Polygon",
+      //         // coordinates: points,
+      //         coordinates:item.attributes.point_set
+      //       },
+      //     },
+      //   },
+      //   layout: {},
+      //   paint: {
+      //     "fill-color": "#088",
+      //     "fill-opacity": 0.3,
+      //   },
+      // });
+      // this.plots.forEach(plot => {
+      //   const sourceId = `plots-source-${plot.id}`;
+      //   const layerId = `plots-layer-${plot.id}`;
+
+      this.map.addSource(sourceId, {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: item.attributes.point_set, // Координаты участка
           },
         },
-        layout: {},
+      });
+
+      this.map.addLayer({
+        id: layerId,
+        type: "fill",
+        source: sourceId,
         paint: {
-          "fill-color": "#088",
-          "fill-opacity": 0.3,
+          "fill-color": "rgba(0, 0, 255, 0.5)", // Цвет заливки
+          "fill-outline-color": "blue", // Цвет обводки
         },
       });
+      this.map.on("click", layerId, (e) => {
+        console.log(e)
+        const features = this.map.queryRenderedFeatures(e.point, {
+          layers: [layerId],
+        });
+        if (features.length > 0) {
+          this.clickedFeature = features[0];
+          const clickedFeature = features[0]; // Информация о кликнутом участке
+          this.showPlotModal = true;
+          console.log(clickedFeature);
+        }
+      });
+      // })
     },
-
 
     // handleDrawCreate(event) {
     //   this.plotData.plotCoordinates = event.features[0].geometry.coordinates;
@@ -158,41 +225,133 @@ handleMapStyleLoad(){
     //   // return plotCoordinates
     // },
     createArea(e) {
+      console.log(this.map.getStyle());
       let data = this.draw.getAll();
       const polygonData = data.features[0].geometry.coordinates;
-        this.plotData.plotCoordinates = polygonData;
-        if(this.plotData.plotCoordinates.length){
-          this.plotData.title = '';
-          this.plotData.level='';
-          this.showSubmitModal = true;
-        }
-    //  this.drawPolygon(polygonData);
-    // this.drawPolygon(this.plotData.plotCoordinates);
+      this.plotData.plotCoordinates = polygonData;
+      if (this.plotData.plotCoordinates.length) {
+        this.plotData.title = "";
+        this.plotData.level = "";
+        this.showSubmitModal = true;
+      }
+
+      //  this.drawPolygon(polygonData);
+      // this.drawPolygon(this.plotData.plotCoordinates);
     },
-    deleteArea(e) {
-      console.log('delete',e)
-      let data = this.draw.getAll();
-      console.log(data,'datadelete')
-      // this.map.removeLayer('maine').removeSource('maine');
-      this.map.removeLayer(this.plotData.title).removeSource(this.plotData.title);
+    async deleteArea() {
+      // let data = this.draw.getAll();
+      const str = this.clickedFeature.layer.id;
+      const plotBackendId = str.replace(/\D/g, "");
+      this.map
+        .removeLayer(this.clickedFeature.layer.id)
+        .removeSource(this.clickedFeature.layer.source);
+      const deletedPlot = await plotsApi.deletePlotById(plotBackendId);
+      this.showPlotModal = false;
     },
-    updateArea(e) {
-      console.log('update',e)
-      let data = this.draw.getAll();
-       console.log(data,'dataupdate',this.map)
-      // this.map.removeLayer('maine').removeSource('maine');
-      this.map.removeLayer(this.plotData.title).removeSource(this.plotData.title);
-      const polygonData = data.features[0].geometry.coordinates;
-      this.drawPolygon(polygonData,this.plotData.title);
-   
-      // this.polygonDataCalc(data);
+    // async updateArea(e) {
+    //   let data = this.draw.getAll();
+    //   const str = this.clickedFeature.layer.id;
+    //   const plotBackendId = str.replace(/\D/g, "");
+    //   this.map
+    //     .removeLayer(this.clickedFeature.layer.id)
+    //     .removeSource(this.clickedFeature.layer.source);
+    //   const polygonData = data.features[0].geometry.coordinates;
+    //   this.plotData.plotCoordinates = polygonData;
+    //   if (this.plotData.plotCoordinates.length) {
+    //     // this.plotData.title = "";
+    //     // this.plotData.level = "";
+    //     this.showSubmitModal = true;
+    //   }
+    //   // this.showPlotModal = false;
+    //   // this.drawPolygon(polygonData,this.clickedFeature.layer.id);
+    //   const updatedPlot = await plotsApi.updatePlot(plotBackendId,polygonData);
+    //   // this.polygonDataCalc(data);
+    // },
+//     async updateArea(e){
+//       let data = this.draw.getAll();
+//       const str = this.clickedFeature.layer.id;
+//       const plotBackendId = str.replace(/\D/g, "");
+//       this.map.on('draw.update', (e) => {
+//   const updatedFeature = e.features[0]; // Обновленная геометрия участка
+
+//   // Ваши действия с обновленной геометрией, например, обновление данных в массиве участков
+//   // Обновление слоя на карте
+//   this.map.getSource(this.clickedFeature.layer.source).setData(updatedFeature.geometry);
+//   const updatedPlot =  plotsApi.updatePlot(plotBackendId,updatedFeature.geometry);
+// });
+// // const updatedPlot = await plotsApi.updatePlot(plotBackendId,updatedFeature.geometry);
+//     },
+
+    clickPlot(e) {
+      const features = this.map.queryRenderedFeatures();
+      console.log(features)
+      // const features = this.map.queryRenderedFeatures(e.point, {
+      //     layers: [layerId],
+      //   });
+      //   if (features.length > 0) {
+          this.showPlotModal = true;
+       // }
+     
     },
 
+    //     updateMap() {
+    //     if (this.map) {
+    //       // Удаление всех слоев и источников карты
+    //       this.map.getStyle().layers.forEach(layer => {
+    //         if (layer.source && layer.source.startsWith('plots-source')) {
+    //           this.map.removeLayer(layer.id);
+    //           this.map.removeSource(layer.source);
+    //         }
+    //       });
+
+    //       // Добавление участков на карту
+    //       this.plots.forEach(plot => {
+    //         const sourceId = `plots-source-${plot.id}`;
+    //         const layerId = `plots-layer-${plot.id}`;
+
+    //         this.map.addSource(sourceId, {
+    //           type: 'geojson',
+    //           data: {
+    //             type: 'Feature',
+    //             geometry: {
+    //               type: 'Polygon',
+    //               coordinates: plot.coordinates // Координаты участка
+    //             }
+    //           }
+    //         });
+
+    //         this.map.addLayer({
+    //           id: layerId,
+    //           type: 'fill',
+    //           source: sourceId,
+    //           paint: {
+    //             'fill-color': 'rgba(0, 0, 255, 0.5)', // Цвет заливки
+    //             'fill-outline-color': 'blue' // Цвет обводки
+    //           }
+    //         });
+    // // Добавление обработчика события click
+    // this.map.on('click', layerId, (e) => {
+    //   const features = this.map.queryRenderedFeatures(e.point, {
+    //     layers: [layerId]
+    //   });
+    //   console.log(features)
+    //   if (features.length > 0) {
+
+    //     const clickedFeature = features[0]; // Информация о кликнутом участке
+    //     console.log(clickedFeature);
+    //   }
+    // });
+
+    //       });
+
+    //     }
+    //   }
   },
 
   components: {
     Map,
     SubmitModal,
+    PlotModal,
   },
 };
 </script>
@@ -206,15 +365,20 @@ handleMapStyleLoad(){
         :showSubmitModal="showSubmitModal"
         @close="showSubmitModal = false"
         :createNewPlot="createNewPlot"
-        :plotData = "plotData"
+        :plotData="plotData"
         :map="this.map"
       />
     </Teleport>
-    <Map
-  
-    />
+    <Teleport to="body">
+      <PlotModal
+        :showPlotModal="showPlotModal"
+        @close="showPlotModal = false"
+        :createNewPlot="createNewPlot"
+        :deleteFun="deleteArea"
+
+ 
+      />
+    </Teleport>
+    <Map />
   </div>
 </template>
-<!-- :createNewPlot="createNewPlot"
-:addMarker="addMarker"
-:drawPolygon="drawPolygon" -->
