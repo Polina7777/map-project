@@ -51,9 +51,7 @@ export default {
       },
     });
     this.getAllPlots();
-    // this.map.on('click',this.addMarker);
     this.map.addControl(this.draw);
-    //  this.map.on('draw.create', this.handleDrawCreate);
     this.map.on("style.load", this.handleMapStyleLoad);
     // this.map.on("draw.create", this.createArea);
     // this.map.on("draw.delete", this.deleteArea);
@@ -83,9 +81,6 @@ export default {
       // });
       //   })
     },
-    clickFun(e) {
-      console.log(e);
-    },
     async getAllPlots() {
       try {
         this.plots = await plotsApi.getAllPlots();
@@ -106,13 +101,17 @@ export default {
           this.plotData.level,
           this.plotData.plotCoordinates
         );
-        // this.drawPolygon(this.plotData.plotCoordinates);
+        console.log(plotsAdd.data.id)
+        const sourceId = `plots-source-${plotsAdd.data.id}`;
+      const layerId = `plots-layer-${plotsAdd.data.id}`;
+         this.drawPolygon(this.plotData.plotCoordinates,layerId,sourceId);
         this.showSubmitModal = false;
       } catch (err) {
         console.log(err);
         // this.error = true
       } finally {
         this.loading = false;
+         this.plotData.plotCoordinates = null
       }
     },
     addMarker(event) {
@@ -124,7 +123,7 @@ export default {
       // this.points.push(point);
       // this.createNewPlots(1,pointSet)
     },
-    drawPolygon() {
+    drawPolygon(plotCoordinates,layerId,sourceId) {
       this.map.addLayer({
         id: layerId,
         type: "fill",
@@ -132,23 +131,33 @@ export default {
         // id: 'maine',
         // id: this.plotData.title,
         // type: "fill",
-        // source: {
-        //   type: "geojson",
-        //   data: {
-        //     type: "Feature",
-        //     geometry: {
-        //       type: "Polygon",
-        //       // coordinates: points,
-        //       coordinates:this.plotData.plotCoordinates
-        //     },
-        //   },
-        // },
-        layout: {},
+          source: {
+          type: "geojson",
+          data: {
+             type: "Feature",
+            geometry: {
+              type: "Polygon",
+              // coordinates: points,
+              coordinates:plotCoordinates
+            },
+          },
+         },
+        // layout: {},
         paint: {
           // "fill-color": "#088",
           // "fill-opacity": 0.3,
           "fill-color": "rgba(0, 0, 255, 0.5)", // Цвет заливки
           "fill-outline-color": "blue", // Цвет обводки
+        },
+      });
+      this.map.addSource(sourceId, {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: plotCoordinates, // Координаты участка
+          },
         },
       });
     },
@@ -211,7 +220,12 @@ export default {
           this.showPlotModal = true;
           console.log(clickedFeature);
         }
+      //   this.map.getSource('plot-source').setData({
+      //   type:'FeatureCollection',
+      //   features: updatedFeatures
+      // })
       });
+   
       // })
     },
 
@@ -225,18 +239,20 @@ export default {
     //   // return plotCoordinates
     // },
     createArea(e) {
-      console.log(this.map.getStyle());
+    console.log(this.draw.getAll())
       let data = this.draw.getAll();
-      const polygonData = data.features[0].geometry.coordinates;
-      this.plotData.plotCoordinates = polygonData;
-      if (this.plotData.plotCoordinates.length) {
+      data.features.map((item,index)=>{
+        const polygonData = data.features[index].geometry.coordinates;
+      if (polygonData.length) {
         this.plotData.title = "";
         this.plotData.level = "";
-        this.showSubmitModal = true;
+        this.plotData.plotCoordinates = polygonData;
+       
       }
-
-      //  this.drawPolygon(polygonData);
-      // this.drawPolygon(this.plotData.plotCoordinates);
+      })
+     
+      this.showSubmitModal = true;
+     //  this.drawPolygon(this.plotData.plotCoordinates);
     },
     async deleteArea() {
       // let data = this.draw.getAll();
