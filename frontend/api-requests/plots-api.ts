@@ -59,8 +59,6 @@ export const createNewPlot =  async (title:any,level:any,pointSet:any) => {
       method: "PUT",
       body: JSON.stringify({
         data:{
-            // title:title,
-            // level:level,
             point_set:pointSet,
         }   
               }),

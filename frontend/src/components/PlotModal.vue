@@ -1,48 +1,27 @@
-<script lang="ts" >
-import PlotForm from './PlotForm.vue';
- 
-export default{
-props:{
- showPlotModal: Boolean,
-//  createNewPlot:Function,
-// value:Object
-deleteFun:Function,
-// updateFun:Function,
-// plotData:Object,
-},
-components:{
-PlotForm
-},
-data(){
-  return{
-    // internalValue:this.plotData
-  }
-},
-// watch:{
-//   internalValue(newValue){
-//     this.$emit('input',newValue)
-//   }
-// }
-}
+<script lang="ts">
+import PlotForm from "./PlotForm.vue";
 
+export default {
+  props: {
+    showPlotModal: Boolean,
+    deleteFun: Function,
+  },
+  components: {
+    PlotForm,
+  },
+};
 </script>
 <template>
   <Transition name="modal">
     <div v-if="showPlotModal" class="modal-mask">
       <div class="modal-container">
-        <!-- <div class="modal-header"> -->
-          
-          <!-- <slot name="header">Create new plot</slot> -->
-        <!-- </div> -->
         <div class="modal-body">
-         
-            <slot name="body">
-        <PlotForm  :deleteFun="deleteFun" />
-        <button
-              class="modal-default-button"
-              @click="$emit('close')"
-            >Close</button>
-   </slot>
+          <slot name="body">
+            <PlotForm :deleteFun="deleteFun" />
+            <button class="modal-default-button" @click="$emit('close')">
+              Close
+            </button>
+          </slot>
         </div>
       </div>
     </div>
@@ -71,19 +50,19 @@ data(){
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
-  color:rgb(71, 71, 76);
+  color: rgb(71, 71, 76);
   background-color: whitesmoke;
-border-radius:10px;
+  border-radius: 10px;
 }
 
-.modal-default-button{
-    padding:5px 8px;
-    border:2px solid rgb(71, 71, 76);
-    background-color:whitesmoke;
-    border-radius:10px;
-    color :rgb(71, 71, 76);
-    font-size: 1rem;
-  }
+.modal-default-button {
+  padding: 5px 8px;
+  border: 2px solid rgb(71, 71, 76);
+  background-color: whitesmoke;
+  border-radius: 10px;
+  color: rgb(71, 71, 76);
+  font-size: 1rem;
+}
 .modal-header h3 {
   margin-top: 0;
   color: #42b983;
@@ -92,8 +71,8 @@ border-radius:10px;
 .modal-body {
   margin: 10px 0;
   display: flex;
-flex-direction: column;
-justify-content: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .modal-default-button {

@@ -1,45 +1,43 @@
-<script lang="ts" >
-import SubmitForm from './submitForm.vue';
- 
-export default{
-props:{
- showSubmitModal: Boolean,
- createNewPlot:Function,
-map:Object,
- plotData:Object,
-// value:Object
-},
-components:{
-SubmitForm
-},
-data(){
-  return{
-    internalValue:this.plotData
-  }
-},
-watch:{
-  internalValue(newValue){
-    this.$emit('input',newValue)
-  }
-}
-}
+<script lang="ts">
+import SubmitForm from "./SubmitForm.vue";
 
+export default {
+  props: {
+    showSubmitModal: Boolean,
+    createNewPlot: Function,
+    map: Object,
+    plotData: Object,
+  },
+  components: {
+    SubmitForm,
+  },
+  data() {
+    return {
+      internalValue: this.plotData,
+    };
+  },
+  watch: {
+    internalValue(newValue) {
+      this.$emit("input", newValue);
+    },
+  },
+};
 </script>
 <template>
   <Transition name="modal">
     <div v-if="showSubmitModal" class="modal-mask">
       <div class="modal-container">
         <div class="modal-header">
-            <!-- <button
-              class="modal-default-button"
-              @click="$emit('close')"
-            >Close</button> -->
           <slot name="header">Create new plot</slot>
         </div>
         <div class="modal-body">
-            <slot name="body">
-        <SubmitForm   :internalValue="internalValue" :createNewPlot="createNewPlot" :map="map" />
-   </slot>
+          <slot name="body">
+            <SubmitForm
+              :internalValue="internalValue"
+              :createNewPlot="createNewPlot"
+              :map="map"
+            />
+          </slot>
         </div>
       </div>
     </div>
@@ -68,19 +66,19 @@ watch:{
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
-  color:rgb(71, 71, 76);
+  color: rgb(71, 71, 76);
   background-color: whitesmoke;
-border-radius:10px;
+  border-radius: 10px;
 }
 
-.modal-default-button{
-    padding:5px 8px;
-    border:2px solid rgb(71, 71, 76);
-    background-color:whitesmoke;
-    border-radius:10px;
-    color :rgb(71, 71, 76);
-    font-size: 1rem;
-  }
+.modal-default-button {
+  padding: 5px 8px;
+  border: 2px solid rgb(71, 71, 76);
+  background-color: whitesmoke;
+  border-radius: 10px;
+  color: rgb(71, 71, 76);
+  font-size: 1rem;
+}
 .modal-header h3 {
   margin-top: 0;
   color: #42b983;
@@ -89,8 +87,8 @@ border-radius:10px;
 .modal-body {
   margin: 10px 0;
   display: flex;
-flex-direction: column;
-justify-content: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .modal-default-button {
